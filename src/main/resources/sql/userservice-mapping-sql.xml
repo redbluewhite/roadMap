@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+					PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" 
+					"http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+					
+<!-- 	userservice-mapping-sql.xml : SQL 를 갖는MetaData  --> 
+ <sqlMap namespace="User">
+
+	<!-- typeAlias : FQCN alias -->
+	<typeAlias alias="user" type="com.roadmap.domain.User"/>
+
+	<!--  명시적 결과 맵 사용  -->
+	<resultMap id="userSelectMap" class="user">
+		<result property="userEmail"  column="user_email"  jdbcType="VARCHAR" />
+		<result property="userName"   column="user_name"   jdbcType="VARCHAR" />
+		<result property="password"   column="password"    jdbcType="VARCHAR" />
+		<result property="regDate"    column="reg_date"    jdbcType="DATE"    />
+	</resultMap>
+	
+	<!-- INSERT 매핑구문에서 사용할 외부파라미터 매핑 -->
+	<parameterMap id="userInsertParameterMap" class="user">
+		<parameter property="userEmail"  jdbcType="VARCHAR"  />
+		<parameter property="userName"   jdbcType="VARCHAR"  />
+		<parameter property="password"   jdbcType="VARCHAR"  />
+		<parameter property="regDate"    jdbcType="DATE"     />
+	</parameterMap>
+	
+	<!-- UPDATE 매핑구문에서 사용할 외부파라미터 매핑 -->
+	<parameterMap id="userUpdateParameterMap"	class="user">
+		<parameter property="userEmail"   jdbcType="VARCHAR"  />
+		<parameter property="userName"   jdbcType="VARCHAR"  />
+		<parameter property="password"   jdbcType="VARCHAR"  />
+	</parameterMap>
+	
+	<!-- INSERT 매핑구문(insert SQL 등록) :: insert element   -->
+	<insert 	id="addUser"		parameterMap="userInsertParameterMap" >
+	 	INSERT
+		INTO MEMBER01( user_email, user_name, password, reg_date) 
+		VALUES( ?,?,?,? )
+	</insert>
+	 
+	 <!-- UPDATE 매핑구문(update SQL 등록) :: update element   -->
+	 <update	id="updateUser" 	parameterMap="userUpdateParameterMap" >
+	   	UPDATE MEMBER01
+	   	SET   user_email=?, user_name=?, password=? 
+		WHERE user_email = #value#
+	 </update>
+	 
+  	<!-- DELETE 매핑구문(delete SQL 등록) :: delete element -->	
+	 <delete	id="removeUser" 	parameterClass="string" >
+	 	DELETE 
+		FROM MEMBER01 
+		WHERE user_email = #value#
+	 </delete>
+	 
+	  	
+	<!-- SELECT 매핑구문(select SQL 등록) :: select element  -->	
+	 <select 	id="getUser" 	parameterClass="string"	resultMap="userSelectMap">
+	 	SELECT
+		user_email, user_name , password , reg_date
+		FROM MEMBER01 
+		WHERE user_email = #value#
+	 </select>
+		
+	<!-- DYNAMIC SELECT 매핑구문(select SQL 등록) :: select element	 -->
+	<select 	id="getUserList" parameterClass="user" resultMap="userSelectMap">
+	 	SELECT
+		user_email, user_name , password , reg_date 		
+		FROM MEMBER01
+		<dynamic prepend="WHERE" >
+			<isNotNull property="userEmail" prepend="AND" >
+				user_email like #userEmail#
+			</isNotNull>
+			<isNotNull property="userName" prepend="OR">
+				user_name = #userName# 
+			</isNotNull>
+		</dynamic>
+		ORDER BY reg_date DESC
+	 </select>
+ 
+</sqlMap>

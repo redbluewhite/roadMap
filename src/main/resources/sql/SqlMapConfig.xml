@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig 
+				PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" 
+				"http://ibatis.apache.org/dtd/sql-map-config-2.dtd" >
+				
+<!--  SqlMapConfig.xml :: iBATIS Framework MetaData -->
+<sqlMapConfig>
+	
+	<!-- properties 파일관리 등록 -->
+	<properties resource="sql/jdbc.properties"/>
+	
+	 <!-- 기타 설정정보 등록 -->
+	<settings	useStatementNamespaces="true"	
+						lazyLoadingEnabled="true"
+						cacheModelsEnabled="true"
+  						enhancementEnabled="true"
+  						maxRequests="32"	
+  						maxSessions="8"	
+  						maxTransactions="2" />
+  						
+ 	 <!-- 3. Transaction Definition -->
+	 <transactionManager type="JDBC">
+	 
+	 <!-- 4. javax.sql.DataSource instance Definition -->
+		<dataSource type="SIMPLE">
+	 		<!-- propertis 파일에서 로드된 resource 는 ${  } 로 접근 가능 :: EL과 비교-->
+	 		<property name="JDBC.Driver" value="${JDBC.Driver}" />
+	        <property name="JDBC.ConnectionURL" value="${JDBC.ConnectionURL}" />
+	        <property name="JDBC.Username" value="${JDBC.Username}"/>
+	        <property name="JDBC.Password" value="${JDBC.Password}"/>
+	 	</dataSource>
+	 
+	 </transactionManager>
+	 
+	 <!-- SQL Definition :: file include -->
+	 <sqlMap resource="sql/userservice-mapping-sql.xml"/>
+</sqlMapConfig>
